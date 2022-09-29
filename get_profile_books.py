@@ -33,7 +33,7 @@ def get_bookshelf(user_id, shelf):
         for book in books:
             isbn, book_data = parse_book(book)
             book_data['shelf'] = shelf
-            data[isbn] = book_data
+            data[book_data['id']] = book_data
         
         # go to next page
         page_num += 1
@@ -61,6 +61,7 @@ def parse_attribute(attribute_data, key, book_data):
         elif key == 'cover':
             book_url = get_book_url(attribute_data)
             book_data['book_url'] = book_url
+            book_data['id'] = str(attribute_data.div.div['data-resource-id'])
         elif key == 'isbn' and attribute_data.div.get_text().strip() == '':
             # hacky solution: isbn won't be used on client-side
             # if no isbn is available then hash the book's title
