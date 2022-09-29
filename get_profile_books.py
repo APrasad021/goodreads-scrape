@@ -74,6 +74,8 @@ def parse_attribute(attribute_data, key, book_data):
             book_data[key] = value
         elif key == 'my_rating' or "'s_rating" in key or key == 'rating':
             value = str(attribute_data)
+            # this is the class of the star span class
+            # ex. if the rating is 4 stars, the there will be 4 spans with 'staticStar p10'
             rating = value.count('staticStar p10')
             if 'rating' not in book_data or rating != 0:
                 book_data['rating'] = rating
