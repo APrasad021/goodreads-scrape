@@ -21,6 +21,4 @@ After those are set up correctly, you can run `python3 book.py`. This will scrap
 
 *TODO:*
 
-[ ]: Save user ratings of books
-
 [ ]: Get picture of book cover
