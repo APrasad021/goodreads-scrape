@@ -8,6 +8,7 @@ def main():
     for shelf in SHELVES:
         book_data.update(get_bookshelf(GOODREADS_USER_ID, shelf))
 
+    ## comment out the following 2 lines if you don't want to write to the database
     connection = open_connection()
     write_bookshelf(book_data, connection)
 

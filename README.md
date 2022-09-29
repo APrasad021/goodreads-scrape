@@ -1,5 +1,12 @@
 ## Usage
-Create a secrets.py file. In it, define the firebase project id and goodreads user id that will be used like so:
+After cloning the repo, the dependencies will need to be installed. This can be done by running:
+`
+pip3 install -r requirements.txt
+`
+in the root directory of the repo.
+
+
+After that, we'll need to create a secrets.py file. In it, the firebase project id and goodreads user id that will be defined and used like so:
 
 `
 FIREBASE_PROJECT_ID = 'project-id-123'
