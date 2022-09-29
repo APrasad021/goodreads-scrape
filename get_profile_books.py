@@ -72,8 +72,11 @@ def parse_attribute(attribute_data, key, book_data):
         elif key == 'num_ratings':
             value = attribute_data.div.get_text().strip().replace(",", "")
             book_data[key] = value
-        elif key == 'my_rating' or "'s_rating" in key:
-            return book_data
+        elif key == 'my_rating' or "'s_rating" in key or key == 'rating':
+            value = str(attribute_data)
+            rating = value.count('staticStar p10')
+            if 'rating' not in book_data or rating != 0:
+                book_data['rating'] = rating
         elif key == 'shelves':
             # does not work; need to be logged in
             value = [link.get_text().strip() for link in attribute_data.find_all('a')] 
