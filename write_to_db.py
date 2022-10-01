@@ -1,3 +1,4 @@
+import time
 import os
 from dotenv import load_dotenv
 import firebase_admin
@@ -11,13 +12,10 @@ def write_bookshelf(books, connection):
     batch = connection.batch()
     for book_key in books:
         book_ref = connection.collection(u'books').document(book_key)
-        book = book_ref.get()
-        if book.exists:
-            batch.update(book_ref, books[book_key])
-        else:
-            batch.set(book_ref, books[book_key])
+        batch.set(book_ref, books[book_key])
     connection.collection(u'books').document(u'last_updated').set({'last_updated': firestore.SERVER_TIMESTAMP})
     batch.commit()
+    print("{}: Wrote {} books to firestore".format(time.ctime(), len(books)))
 
 def open_connection():
     # Use the application default credentials

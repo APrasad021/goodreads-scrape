@@ -19,6 +19,8 @@ Make sure that you're [authenticated as a service account](https://cloud.google.
 
 After those are set up correctly, you can run `python3 book.py`. This will scrape the book data for a user then write it into a books collection in Firestore.
 
+If you want to have the script run every minute, you can run `python3 script.py`.
+
 *TODO:*
 
 [ ]: Get picture of book cover
