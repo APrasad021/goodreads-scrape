@@ -1,7 +1,10 @@
+import os
+from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-from secrets import FIREBASE_PROJECT_ID
+
+load_dotenv()
 
 
 def write_bookshelf(books, connection):
@@ -20,7 +23,7 @@ def open_connection():
     # Use the application default credentials
     cred = credentials.ApplicationDefault()
     firebase_admin.initialize_app(cred, {
-     'projectId': FIREBASE_PROJECT_ID,
+     'projectId': os.getenv('FIREBASE_PROJECT_ID'),
     })
 
     db = firestore.client()

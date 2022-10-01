@@ -1,3 +1,4 @@
 beautifulsoup4==4.11.1
 firebase_admin==5.4.0
+python-dotenv==0.21.0
 requests==2.28.1
