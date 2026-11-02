@@ -9,13 +9,25 @@ load_dotenv()
 
 
 def write_bookshelf(books, connection):
+    if not books:
+        # an empty scrape almost certainly means something went wrong; don't wipe the collection
+        print("{}: Scraped 0 books, skipping write".format(time.ctime()))
+        return
+
+    collection = connection.collection(u'books')
     batch = connection.batch()
     for book_key in books:
-        book_ref = connection.collection(u'books').document(book_key)
-        batch.set(book_ref, books[book_key])
-    connection.collection(u'books').document(u'last_updated').set({'last_updated': firestore.SERVER_TIMESTAMP})
+        batch.set(collection.document(book_key), books[book_key])
+
+    # remove books that are no longer on any of the scraped shelves
+    removed = [doc.id for doc in collection.list_documents()
+               if doc.id != u'last_updated' and doc.id not in books]
+    for book_key in removed:
+        batch.delete(collection.document(book_key))
+
+    batch.set(collection.document(u'last_updated'), {'last_updated': firestore.SERVER_TIMESTAMP})
     batch.commit()
-    print("{}: Wrote {} books to firestore".format(time.ctime(), len(books)))
+    print("{}: Wrote {} books to firestore, removed {}".format(time.ctime(), len(books), len(removed)))
 
 def open_connection():
     # Use the application default credentials

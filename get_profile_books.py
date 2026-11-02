@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import requests
+from goodreads_auth import check_logged_in, get_session
 from re import sub
 # import json
 
@@ -9,7 +9,9 @@ GOODREADS_BOOK_BASE_URL = GOODREADS_BASE_URL + '/book/show/'
 SHELVES = ['read', 'currently-reading', 'to-read']
 
 
-def get_bookshelf(user_id, shelf):
+def get_bookshelf(user_id, shelf, session=None):
+    if session is None:
+        session = get_session()
     is_page_valid = True
     page_num = 1
 
@@ -18,8 +20,8 @@ def get_bookshelf(user_id, shelf):
     while is_page_valid:
         page_link = "https://www.goodreads.com/review/list/{user_id}?page={page_num}&shelf={shelf}".format(
             user_id=user_id, page_num=str(page_num), shelf=shelf)
-        page_response = requests.get(
-            page_link, auth=('user', 'pass'), timeout=10)
+        page_response = session.get(page_link, timeout=30)
+        check_logged_in(page_response)
         page_content = BeautifulSoup(page_response.content, "html.parser")
 
         table = page_content.find('table', attrs={'class': 'table stacked'})
@@ -84,12 +86,16 @@ def parse_attribute(attribute_data, key, book_data):
         # this is the class of the star span class
         # ex. if the rating is 4 stars, the there will be 4 spans with 'staticStar p10'
         rating = value.count('staticStar p10')
+        # when logged in as the shelf's owner, the rating is editable stars with data-rating="4.0"
+        stars = attribute_data.find('div', attrs={'data-rating': True})
+        if stars is not None:
+            rating = int(float(stars['data-rating']))
         if 'rating' not in book_data or rating != 0:
             book_data['rating'] = rating
     elif key == 'shelves':
-        # does not work; need to be logged in
+        # skip the "[edit]" link shown when logged in
         value = [link.get_text().strip()
-                 for link in attribute_data.find_all('a')]
+                 for link in attribute_data.find_all('a', class_='shelfLink')]
         book_data[key] = value
     else:
         value = attribute_data.div.get_text().strip()
